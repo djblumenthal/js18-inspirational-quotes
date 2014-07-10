@@ -2,36 +2,31 @@
 var Quote = function(quote, author){
 	this.quote = quote;
 	this.author = author;
+	this.quoteID = author + quote;
 	this.ranking = 3;
 	this.addQuoteToArray = function(){
 		quotesArr.push(this);
 	}
+
 	this.renderQuoteContainer = function (){
-		var quoteContainer = $('<div class="quote-container">');
+		var quoteContainer = $('<div class="quote-container" data-quoteID="'+this.quoteID+'">');
 		var quoteChangeContainer = $('<div class="quote-change-container">');
 		quoteContainer.append('<h5 class="author-main">' +this.author+ '</h5>', quoteChangeContainer, '<p>'+this.quote+'</p>');
-		quoteChangeContainer.append('<div class="ranking">'+this.ranking+'</div>', '<input type="submit" value="Delete">');
-		return quoteContainer;
+		var rankingContainer = $('<div class="ranking-container">')
+		for (var i = 1; i<=this.ranking; i++){
+			rankingContainer.append('<i class="icon-star star" data-ranking='+i+'></i>');			
+		}
+		for (var i=this.ranking+1; i<=5; i++){
+			rankingContainer.append('<i class="icon-star-empty star" data-ranking="'+i+'"></i>');
+		}
 
+		quoteChangeContainer.append(rankingContainer, '<input type="submit" value="Delete">');
+		return quoteContainer;
 	};	
-	this.renderAuthorSubsection = function(){
-		var authorSubsectionContainer = $('<div class="author-subsection">');
-		var authorName
-	}
+
 
 	
 }
-// <section class='author-subsection'>
-// 		<h3>Author Name</h3>
-// 		<div class='quote-container'>
-// 			<div class='quote-change-container'>
-// 				<div class='ranking'>XXX</div>
-// 				<input type='submit' value='Delete'>
-// 			</div>
-// 			<p>Quote Lorem ipsum dolor sit amet, consectetur adipisicing elit. Totam rem ipsam pariatur ut nihil architecto nesciunt voluptate esse! Voluptas, autem reiciendis provident reprehenderit rem repudiandae perferendis aut eos est, ad!</p>
-
-// 		</div>
-// 	</section>
 
 
 // quote instances
@@ -51,41 +46,94 @@ var quotesArr = [quote1, quote2, quote3, quote4, quote5, quote6, quote7, quote8,
 
 
 var renderQuotesArr = function (){
+	// sort quotes in array by ranking
+	quotesArr.sort(function(a,b){
+		if (a.ranking > b.ranking){
+			return 1;
+		}if (a.ranking < b.ranking){
+			return -1;
+		}return 0;
+	});
+	// clear quotes rendered on page
+	$('.main-quote-list').empty()
+	// clear author subsection
+
+	// re-render sorted quotes array
 	for (var i=0; i<quotesArr.length; i++){
   		$('.main-quote-list').append(quotesArr[i].renderQuoteContainer());
   	}
 };
 
-
-
-
-
+var renderAuthorSubsection = function(authorName){
+	var authorSubsectionContainer = $('<section class="author-subsection author-elements">');
+	var authorHeading = $('<h3>').text(authorName);
+	var authorClose = $('<button class="author-close">').text('close').css('color', 'red');
+	authorSubsectionContainer.append(authorHeading, authorClose);
+	for (var i=0; i<quotesArr.length; i++){
+		if (quotesArr[i].author == authorName){
+			authorSubsectionContainer.append(quotesArr[i].renderQuoteContainer());
+		}
+	}
+	$('.author-subsection *').addClass('author-elements');
+	return authorSubsectionContainer;
+}
 
 
 $(document).on('ready', function() {
 	renderQuotesArr();
-	$(document).on('click', '.author-main', function(){
-		$('#section-add-quote').after()
-	})
-  $('#submit-quote').on('click', function(e){
-  	e.preventDefault();
-  	var quoteText = $('#quote-text').val();
-  	var quoteAuthor = $('#quote-author').val();
+	$('.main-quote-list').on('click', '.author-main', function(){
+		$('.author-subsection').remove();
+		$('#section-add-quote').after(renderAuthorSubsection(($(this).text())));
+	});
+	
+	$(document).on('click', '.author-close', function(){
+		$('.author-subsection').remove();
+	});
 
-  	var newQuote = new Quote(quoteText, quoteAuthor);
-  	newQuote.addQuoteToArray();
-  	$('.main-quote-list').empty();
-  	renderQuotesArr();
-  	$('#quote-text').val('');
-  	$('#quote-author').val('');
-  });
+	$(document).on('click', '.star', function(){
+		// check quote array for matching quote
+		
+		for (var i=0; i<quotesArr.length; i++){
+			if ($(this).closest('.quote-container').attr('data-quoteID')==quotesArr[i].quoteID){
+				quotesArr[i].ranking = +$(this).attr('data-ranking');
+				break;
+			}
+		
+		}
+
+	  	renderQuotesArr();
+
+	});
+
+		$(document).on('click', '.author-elements .star', function(){
+		// check quote array for matching quote
+		
+		for (var i=0; i<quotesArr.length; i++){
+			if ($(this).closest('.quote-container').attr('data-quoteID')==quotesArr[i].quoteID){
+				quotesArr[i].ranking = +$(this).attr('data-ranking');
+				break;
+			}
+		
+		}
+
+	  	renderQuotesArr();
+
+	});
+	
+  
+  	$('#submit-quote').on('click', function(e){
+	  	e.preventDefault();
+	  	var quoteText = $('#quote-text').val();
+	  	var quoteAuthor = $('#quote-author').val();
+
+	  	var newQuote = new Quote(quoteText, quoteAuthor);
+	  	newQuote.addQuoteToArray();
+	  	
+	  	renderQuotesArr();
+	  	$('#quote-text').val('');
+	  	$('#quote-author').val('');
+	});
 });
-
-
-
-
-
-
 
 
 

@@ -13,9 +13,25 @@ var Quote = function(quote, author){
 		quoteChangeContainer.append('<div class="ranking">'+this.ranking+'</div>', '<input type="submit" value="Delete">');
 		return quoteContainer;
 
-	};
-}
+	};	
+	this.renderAuthorSubsection = function(){
+		var authorSubsectionContainer = $('<div class="author-subsection">');
+		var authorName
+	}
 
+	
+}
+// <section class='author-subsection'>
+// 		<h3>Author Name</h3>
+// 		<div class='quote-container'>
+// 			<div class='quote-change-container'>
+// 				<div class='ranking'>XXX</div>
+// 				<input type='submit' value='Delete'>
+// 			</div>
+// 			<p>Quote Lorem ipsum dolor sit amet, consectetur adipisicing elit. Totam rem ipsam pariatur ut nihil architecto nesciunt voluptate esse! Voluptas, autem reiciendis provident reprehenderit rem repudiandae perferendis aut eos est, ad!</p>
+
+// 		</div>
+// 	</section>
 
 
 // quote instances
@@ -48,6 +64,9 @@ var renderQuotesArr = function (){
 
 $(document).on('ready', function() {
 	renderQuotesArr();
+	$(document).on('click', '.author-main', function(){
+		$('#section-add-quote').after()
+	})
   $('#submit-quote').on('click', function(e){
   	e.preventDefault();
   	var quoteText = $('#quote-text').val();

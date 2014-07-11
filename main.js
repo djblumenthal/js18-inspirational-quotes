@@ -74,7 +74,7 @@ var renderAuthorSubsection = function(authorName){
 			authorSubsectionContainer.append(quotesArr[i].renderQuoteContainer());
 		}
 	}
-	$('.author-subsection *').addClass('author-elements');
+	$(".author-subsection").find('*').addClass('author-elements');
 	return authorSubsectionContainer;
 }
 
